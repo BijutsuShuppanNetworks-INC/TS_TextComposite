@@ -16,18 +16,7 @@
     overflow: hidden;
   }
 
-   @font-face {
-    font-family: 'Stint_Ultra';
-    src: url(http://themes.googleusercontent.com/static/fonts/stintultraexpanded/v2/FeigX-wDDgHMCKuhekhedTcHt7R-NPdhrDLjTJhdxn0.woff) format('woff');
-    font-weight: 400;
-    font-style: normal;
-  }
-
-
-
-  /* プレビューエリア
-     ========================================================================== */
-  .preview{
+  .canvas{
     width: 100%;
     height: 200px;
     background: url(test.png);
@@ -35,19 +24,17 @@
     background-size: 180px;
   }
 
-  /* 文字出力領域
-     ========================================================================== */
-  .preview__text_area{
-    position: absolute;
-    top: 2px;
-    left: 2px;
+   @font-face {
+    font-family: 'Stint_Ultra';
+    src: url(http://themes.googleusercontent.com/static/fonts/stintultraexpanded/v2/FeigX-wDDgHMCKuhekhedTcHt7R-NPdhrDLjTJhdxn0.woff) format('woff');
+    font-weight: 400;
+    font-style: normal;
   }
 
-
-
-  /* 文字入力領域
-     ========================================================================== */
-  .input{
+  .canvas--input-flame{
+    position: absolute;
+    top: 10px;
+    left: 8px;
     width: 300px;
     height: 70px;
     border: 2px solid #fff;
@@ -56,7 +43,10 @@
     background: #A2C5D9;
   }
 
-  .input__area{
+  .canvas--input-area{
+    position: absolute;
+    top: 2px;
+    left: 2px;
     width: 290px;
     height: 60px;
     border: none;
@@ -67,10 +57,10 @@
     overflow: hidden;
   }
 
+  .canvas--input-area__hide:focus{
+    border: none;
+  }
 
-
-  /* canvas合成後
-     ========================================================================== */
   .grayLayor{
     /*display: none;*/
     position: absolute;
@@ -84,7 +74,7 @@
     transition: all .5s ease-in;
   }
 
-  #canvas{
+  #c{
     display: none;
     font-size: 18px;
   }
@@ -123,17 +113,15 @@
 
 <body>
 <div class="wrapper">
-  <div class="preview">
-    <div class="preview__text_area"></div>
-  </div>
-
-  <div class="input">
-    <textarea name="inputArea1" placeholder="sample" rows="3" class="input__area" id="inputArea1" deta-inputAreaLeft="5" deta-inputAreaTop="20"></textarea>
+  <div class="canvas">
+    <div class="canvas--input-flame">
+      <textarea name="inputArea1" placeholder="sample" rows="3" class="canvas--input-area" id="inputArea1" deta-inputAreaLeft="5" deta-inputAreaTop="20"></textarea>
+    </div>
   </div>
 
   <button id="btn">入力終了</button>
 
-  <canvas id="canvas"></canvas>
+  <canvas id="c"></canvas>
 
   <div class="grayLayor">
     <div class="grayLayor--relust">
@@ -150,7 +138,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 <script>
 $(function(){
-  // canvasから画像合成
+　 // canvasから画像合成
   // ==========================================================================
   $('#btn').click(function(){
     // grayLayor出現
@@ -163,7 +151,7 @@ $(function(){
     // 画像作成
     var img = document.createElement("img");
     img.onload = function(){
-      var canvas = document.getElementById("canvas");
+      var canvas = document.getElementById("c");
       canvas.width = 320;
       canvas.height = 200;
       var ctx = canvas.getContext("2d");
@@ -182,16 +170,18 @@ $(function(){
 
       var $textArea = $('#inputArea1'),
           text = $textArea.val(),
-          x = $textArea.attr('deta-inputAreaLeft'),
-          y = $textArea.attr('deta-inputAreaTop');
+          x,
+          y;
 
 
       var _fillTextLine = function(ctx, text, x, y){
         var textList = text.split('\n');
-        var lineHeight = 21; // 行の高さ
-        textList.forEach(function(text, i){
-          ctx.fillText(text, x, 0 + lineHeight * i);
-        });
+        var lineHeight = ctx.measureText("あ").width;
+        textList.forEach(function(elm, i) {
+            Array.prototype.forEach.call(elm, function(ch, j) {
+              ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+            });
+          });
       };
 
       _fillTextLine(ctx, text, x, y);

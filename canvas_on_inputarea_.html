@@ -16,18 +16,7 @@
     overflow: hidden;
   }
 
-   @font-face {
-    font-family: 'Stint_Ultra';
-    src: url(http://themes.googleusercontent.com/static/fonts/stintultraexpanded/v2/FeigX-wDDgHMCKuhekhedTcHt7R-NPdhrDLjTJhdxn0.woff) format('woff');
-    font-weight: 400;
-    font-style: normal;
-  }
-
-
-
-  /* プレビューエリア
-     ========================================================================== */
-  .preview{
+  .canvas{
     width: 100%;
     height: 200px;
     background: url(test.png);
@@ -35,19 +24,17 @@
     background-size: 180px;
   }
 
-  /* 文字出力領域
-     ========================================================================== */
-  .preview__text_area{
-    position: absolute;
-    top: 2px;
-    left: 2px;
+   @font-face {
+    font-family: 'Stint_Ultra';
+    src: url(http://themes.googleusercontent.com/static/fonts/stintultraexpanded/v2/FeigX-wDDgHMCKuhekhedTcHt7R-NPdhrDLjTJhdxn0.woff) format('woff');
+    font-weight: 400;
+    font-style: normal;
   }
 
-
-
-  /* 文字入力領域
-     ========================================================================== */
-  .input{
+  .canvas--input-flame{
+    position: absolute;
+    top: 10px;
+    left: 8px;
     width: 300px;
     height: 70px;
     border: 2px solid #fff;
@@ -56,7 +43,10 @@
     background: #A2C5D9;
   }
 
-  .input__area{
+  .canvas--input-area{
+    position: absolute;
+    top: 2px;
+    left: 2px;
     width: 290px;
     height: 60px;
     border: none;
@@ -67,10 +57,10 @@
     overflow: hidden;
   }
 
+  .canvas--input-area__hide:focus{
+    border: none;
+  }
 
-
-  /* canvas合成後
-     ========================================================================== */
   .grayLayor{
     /*display: none;*/
     position: absolute;
@@ -84,7 +74,7 @@
     transition: all .5s ease-in;
   }
 
-  #canvas{
+  #c{
     display: none;
     font-size: 18px;
   }
@@ -123,17 +113,15 @@
 
 <body>
 <div class="wrapper">
-  <div class="preview">
-    <div class="preview__text_area"></div>
-  </div>
-
-  <div class="input">
-    <textarea name="inputArea1" placeholder="sample" rows="3" class="input__area" id="inputArea1" deta-inputAreaLeft="5" deta-inputAreaTop="20"></textarea>
+  <div class="canvas">
+    <div class="canvas--input-flame">
+      <textarea name="inputArea1" placeholder="sample" rows="3" class="canvas--input-area" id="inputArea1" deta-inputAreaLeft="5" deta-inputAreaTop="20"></textarea>
+    </div>
   </div>
 
   <button id="btn">入力終了</button>
 
-  <canvas id="canvas"></canvas>
+  <canvas id="c"></canvas>
 
   <div class="grayLayor">
     <div class="grayLayor--relust">
@@ -150,6 +138,57 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 <script>
 $(function(){
+  // テキストエリアの入力制限
+  // ==========================================================================
+  // var $textArea = $('#inputArea1');
+  // var row       = $textarea.attr('rows');
+  // var fs        = $('.canvas--input-area').css('font-size').replace(/px/g,''),
+  //     tw        = $textarea.width();
+
+  // $('body').keyup(function(event) {
+  //   var txtValue  = $textarea.val();
+  //   // 全角文字数をチェック
+  //   var charcount = function (str) {
+  //     len = 0;
+  //     str = escape(str);
+  //     for (i=0; i<str.length; i++,len++) {
+  //       if (str.charAt(i) == "%") {
+  //         if (str.charAt(++i) == "u") {
+  //           i += 3;
+  //           len++;
+  //         };
+  //         i++;
+  //       };
+  //     };
+  //     var strCount = Math.ceil(len.toString() / 2);
+  //     return strCount;
+  //   };
+
+  //   var txtCount = charcount(txtValue);
+  //   console.log('全角で' + txtCount);
+
+  //   // 強制改行
+  //   if( txtCount >= Math.floor(tw / fs)){
+  //     console.log('改行');
+  //     txtValue = txtValue + '\n';
+  //     $textarea.val(txtValue);
+  //   };
+
+
+
+  //   // 改行回数の制限
+  //   var r = (txtValue.match(/\r\n|\n/g)).length;
+  //   if( r >= row) {
+  //     txtValue = txtValue.substr(0, txtValue.length - 1);
+  //     console.log('改行の数は' + txtValue);
+  //     $textarea.val(txtValue);
+  //     return false;
+  //   };
+  // });
+
+
+
+
   // canvasから画像合成
   // ==========================================================================
   $('#btn').click(function(){
@@ -163,7 +202,7 @@ $(function(){
     // 画像作成
     var img = document.createElement("img");
     img.onload = function(){
-      var canvas = document.getElementById("canvas");
+      var canvas = document.getElementById("c");
       canvas.width = 320;
       canvas.height = 200;
       var ctx = canvas.getContext("2d");
@@ -174,10 +213,12 @@ $(function(){
       ctx.fillStyle = canvasPattern;
       ctx.rect(0, 0, 320, 200);
       ctx.fill();
+      // ctx.drawImage(img, 0, 0); // 画像をそのまま表示
 
       // テキスト
       ctx.fillStyle = "#000";
       ctx.font = "20px normal 'Stint_Ultra'";
+      // ctx.font = "20px normal ヒラギノ角ゴ Pro W3, Hiragino Kaku Gothic Pro, Arial  , Meiryo";
       ctx.textBaseline = "top";
 
       var $textArea = $('#inputArea1'),
@@ -196,6 +237,9 @@ $(function(){
 
       _fillTextLine(ctx, text, x, y);
 
+      // var add = document.getElementById("add");
+      // var value = '<a href="' + canvas.toDataURL() + '">画像のみ表示</a>';
+      // add.innerHTML  =  value;
       var img_png_src = canvas.toDataURL();
       $('#add').attr('src', img_png_src);
     };
