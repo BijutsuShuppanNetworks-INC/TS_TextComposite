@@ -22,11 +22,21 @@
       border-left: 1px solid #ccc;
       background: #FFF;
     }
+    @media screen and (max-width: 768px){
+      #wrap{
+        width: 100%;
+        border: none;
+      }
+    }
 
     h1{
       padding: 2em;
       font-size: 12px;
       color: #666;
+    }
+
+    ul{
+      line-height: 2;
     }
   </style>
 </head>
@@ -37,9 +47,9 @@
     </header>
     <section>
       <ul>
-        <li><a href="canvas.html">基本</a></li>
-        <li><a href="canvas_retina.html">retina対応</a></li>
-        <li><a href="canvas_on_inputarea_.html">inputエリアが画像上のもの</a></li>
+        <li><a href="canvas.html">基本(テキスト入力エリアとプレビューが別)</a></li>
+        <li><a href="canvas_retina.html">retina対応(上記のretina対応版)</a></li>
+        <li><a href="canvas_on_inputarea_.html">プレビュー上にテキスト入力エリアがあるもの</a></li>
         <li><a href="canvas_tategaki.html">縦書き</a></li>
       </ul>
     </section>
