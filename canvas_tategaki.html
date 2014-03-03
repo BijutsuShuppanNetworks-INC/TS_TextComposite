@@ -69,6 +69,7 @@
     -webkit-appearance: none;
     font-family: 'Stint_Ultra';
     overflow: hidden;
+    white-space:pre;
   }
 
 
@@ -159,8 +160,9 @@
 $(function(){
   var $preview = $('#js_preview'),
       $textArea = $('#inputArea1');
-  var preview_x = parseInt($textArea.attr('data-inputAreaLeft'))*1.388;
-      preview_y = parseInt($textArea.attr('data-inputAreaTop'))*1.388;
+  var s = 1.388;
+  var preview_x = parseInt($textArea.attr('data-inputAreaLeft')) *s;
+      preview_y = parseInt($textArea.attr('data-inputAreaTop')) *s;
   $preview.css({
     'top': preview_y,
     'left': preview_x
@@ -198,18 +200,47 @@ $(function(){
       ctx.textBaseline = "top";
 
       var text      = $textArea.val(),
-          render_x  = preview_x*1.3,
-          render_y  = preview_y*1.3,
+          render_x  = preview_x *s,
+          render_y  = preview_y *s,
           x,y;
 
 
       var _fillTextLine = function(ctx, text, x, y){
         var textList = text.split('\n');
         var lineHeight = ctx.measureText("あ").width;
+        var stx = canvas.width,
+            sty = canvas.height;
         textList.forEach(function(elm, i) {
             Array.prototype.forEach.call(elm, function(ch, j) {
+              // もしchが-と一致したら
+              if("{}()[]「」『』（）【】［］｛｝…─━ー=＝～｜|".indexOf(ch) > -1){
+                var render_x2 = -stx +render_y +lineHeight*j;//201
+                var render_y2 = -render_y -lineHeight*s/2+lineHeight*i;//68
+                //
+                ctx.save();
+                  ctx.rotate(90* Math.PI / 180);
+                  ctx.translate(stx, -stx);
+                  ctx.fillText(ch, render_x2, render_y2);
+                ctx.restore();
 
-              ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+              }else if("。、".indexOf(ch) > -1){
+                var r = lineHeight*i;
+                var render_x2 = -stx +render_y +lineHeight*j;
+                var render_y2 = -render_y +lineHeight*s/3 +lineHeight*i;
+                ctx.save();
+                  ctx.scale(-1,1);
+                  ctx.rotate(90* Math.PI / 180);
+                  ctx.translate(stx, stx);
+                  ctx.fillText(ch, render_x2, -render_y2);
+                ctx.restore();
+                console.log(render_x2 +'←記号の位置X');
+                console.log(render_y2 +'←記号の位置y');
+                console.log(r);
+
+              }else{
+                ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+                console.log(x-lineHeight*i +'←文字の位置X');
+              }
             });
           });
       };
@@ -235,7 +266,9 @@ $(function(){
   // ==========================================================================
     $textArea.change(function(){
       var val = $(this).val();
-      $('#js_preview').text(val);
+      var textList = val.replace('\n','\<br\>');
+      console.log(textList);
+      $('#js_preview').html(textList);
     })
 });
 
