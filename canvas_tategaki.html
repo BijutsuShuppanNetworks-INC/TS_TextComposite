@@ -28,12 +28,14 @@
   /* プレビューエリア
      ========================================================================== */
   .preview{
+    position: relative;
     width: 180px;
     height: 180px;
     margin: 10px auto;
     background: url(screen.png);
     -webkit-background-size: 180px;
     background-size: 180px;
+    overflow: hidden;
   }
 
 
@@ -42,6 +44,8 @@
      ========================================================================== */
   .preview__text_area{
     position: absolute;
+    margin: 0;
+    background: #FFC;
     font-family: "ヒラギノ角ゴ Pro W3, Hiragino Kaku Gothic Pro, Arial  , Meiryo";
     -webkit-writing-mode:vertical-rl;
     direction:ltr;
@@ -132,11 +136,11 @@
 <body>
 <div class="wrapper">
   <div class="preview">
-    <div class="preview__text_area" id="js_preview"></div>
+    <pre class="preview__text_area" id="js_preview"></pre>
   </div>
 
   <div class="input">
-    <textarea name="inputArea1" placeholder="sample" rows="3" class="input__area" id="inputArea1" data-inputAreaLeft="150" data-inputAreaTop="25"></textarea>
+    <textarea name="inputArea1" placeholder="sample" rows="3" class="input__area" id="inputArea1" data-inputAreaLeft="150" data-inputAreaTop="25" data-inputAreaWidth="100" data-inputAreaHeight="130"></textarea>
   </div>
 
   <button id="btn">入力終了</button>
@@ -161,11 +165,15 @@ $(function(){
   var $preview = $('#js_preview'),
       $textArea = $('#inputArea1');
   var s = 1.388;
-  var preview_x = parseInt($textArea.attr('data-inputAreaLeft')) *s;
-      preview_y = parseInt($textArea.attr('data-inputAreaTop')) *s;
+  var preview_w = $textArea.attr('data-inputAreaWidth'),
+      preview_h = $textArea.attr('data-inputAreaHeight');
+  var preview_x = parseInt($textArea.attr('data-inputAreaLeft'));
+      preview_y = parseInt($textArea.attr('data-inputAreaTop'));
   $preview.css({
-    'top': preview_y,
-    'left': preview_x
+    'top'   : preview_y,
+    'left'  : (preview_x - preview_w ) *s,
+    'width' : preview_w,
+    'height': preview_h
   })
 
 　 // canvasから画像合成
@@ -200,8 +208,8 @@ $(function(){
       ctx.textBaseline = "top";
 
       var text      = $textArea.val(),
-          render_x  = preview_x *s,
-          render_y  = preview_y *s,
+          render_x  = preview_x *s*s,
+          render_y  = preview_y *s*s,
           x,y;
 
 
@@ -213,33 +221,30 @@ $(function(){
         textList.forEach(function(elm, i) {
             Array.prototype.forEach.call(elm, function(ch, j) {
               // もしchが-と一致したら
-              if("{}()[]「」『』（）【】［］｛｝…─━ー=＝～｜|".indexOf(ch) > -1){
-                var render_x2 = -stx +render_y +lineHeight*j;//201
-                var render_y2 = -render_y -lineHeight*s/2+lineHeight*i;//68
-                //
+              if("{}()[]「」『』（）【】［］｛｝…─━ー=＝～^｜|".indexOf(ch) > -1 || ch.match(/[a-z]/i)){
+                var ltr_render_x = -stx +render_y +lineHeight*j;//201
+                var ltr_render_y = -render_y -lineHeight*s/2+lineHeight*i;//68
                 ctx.save();
                   ctx.rotate(90* Math.PI / 180);
                   ctx.translate(stx, -stx);
-                  ctx.fillText(ch, render_x2, render_y2);
+                  ctx.fillText(ch, ltr_render_x, ltr_render_y);
                 ctx.restore();
 
-              }else if("。、".indexOf(ch) > -1){
+              }else if("。
+
+、".indexOf(ch) > -1){
                 var r = lineHeight*i;
-                var render_x2 = -stx +render_y +lineHeight*j;
-                var render_y2 = -render_y +lineHeight*s/3 +lineHeight*i;
+                var ltr_render_x = -stx +render_y +lineHeight*j;
+                var ltr_render_y = -render_y +lineHeight*s/3 +lineHeight*i;
                 ctx.save();
                   ctx.scale(-1,1);
                   ctx.rotate(90* Math.PI / 180);
                   ctx.translate(stx, stx);
-                  ctx.fillText(ch, render_x2, -render_y2);
+                  ctx.fillText(ch, ltr_render_x, -ltr_render_y);
                 ctx.restore();
-                console.log(render_x2 +'←記号の位置X');
-                console.log(render_y2 +'←記号の位置y');
-                console.log(r);
 
               }else{
                 ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
-                console.log(x-lineHeight*i +'←文字の位置X');
               }
             });
           });
@@ -261,15 +266,25 @@ $(function(){
   });
 
 
-
   // inputの内容をpreviewに反映
   // ==========================================================================
     $textArea.change(function(){
       var val = $(this).val();
-      var textList = val.replace('\n','\<br\>');
-      console.log(textList);
+      var textList = val.replace(/ /g,'    ').replace(/　/g,'     ');
+
+      for (var i = 0; i < textList.length; i++ ) {
+        m = textList[i];
+        if(m.match(/[a-z]/i)) {
+          var t  = textList.substring(0,i),
+              t2 = textList.substring(i+1);
+          console.log(t +m +'  ' + t2);
+          textList = t +m +'  ' + t2;
+          console.log('aaa->' +textList);
+        }
+      }
       $('#js_preview').html(textList);
-    })
+    });
+
 });
 
 
@@ -277,3 +292,4 @@ $(function(){
 
 </body>
 </html>
+
