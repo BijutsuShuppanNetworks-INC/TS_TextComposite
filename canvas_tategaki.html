@@ -230,9 +230,7 @@ $(function(){
                   ctx.fillText(ch, ltr_render_x, ltr_render_y);
                 ctx.restore();
 
-              }else if("。
-
-、".indexOf(ch) > -1){
+              }else if("。、".indexOf(ch) > -1){
                 var r = lineHeight*i;
                 var ltr_render_x = -stx +render_y +lineHeight*j;
                 var ltr_render_y = -render_y +lineHeight*s/3 +lineHeight*i;
