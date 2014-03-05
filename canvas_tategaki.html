@@ -45,10 +45,10 @@
   .preview__text_area{
     position: absolute;
     margin: 0;
-    background: #FFC;
     font-family: "ヒラギノ角ゴ Pro W3, Hiragino Kaku Gothic Pro, Arial  , Meiryo";
     -webkit-writing-mode:vertical-rl;
     direction:ltr;
+    -webkit-user-select:none;
   }
 
 
@@ -220,8 +220,8 @@ $(function(){
             sty = canvas.height;
         textList.forEach(function(elm, i) {
             Array.prototype.forEach.call(elm, function(ch, j) {
-              // もしchが-と一致したら
               if("{}()[]「」『』（）【】［］｛｝…─━ー=＝～^｜|".indexOf(ch) > -1 || ch.match(/[a-z]/i)){
+              // もし上記記号・アルファベットと一致したら右90°回転
                 var ltr_render_x = -stx +render_y +lineHeight*j;//201
                 var ltr_render_y = -render_y -lineHeight*s/2+lineHeight*i;//68
                 ctx.save();
@@ -231,6 +231,7 @@ $(function(){
                 ctx.restore();
 
               }else if("。、".indexOf(ch) > -1){
+              // もし上記と一致したら反転+左90°回転
                 var r = lineHeight*i;
                 var ltr_render_x = -stx +render_y +lineHeight*j;
                 var ltr_render_y = -render_y +lineHeight*s/3 +lineHeight*i;
@@ -267,20 +268,14 @@ $(function(){
   // inputの内容をpreviewに反映
   // ==========================================================================
     $textArea.change(function(){
+      $('#js_preview').css('display','none');
       var val = $(this).val();
-      var textList = val.replace(/ /g,'    ').replace(/　/g,'     ');
+      var textList = val.replace(/ /g,'    ').replace(/　/g,'     ').replace(/([a-z])/gi,'$1  ');
 
-      for (var i = 0; i < textList.length; i++ ) {
-        m = textList[i];
-        if(m.match(/[a-z]/i)) {
-          var t  = textList.substring(0,i),
-              t2 = textList.substring(i+1);
-          console.log(t +m +'  ' + t2);
-          textList = t +m +'  ' + t2;
-          console.log('aaa->' +textList);
-        }
-      }
-      $('#js_preview').html(textList);
+      setTimeout(function(){
+        $('#js_preview').html(textList).css('display','block');
+      }, 100)
+
     });
 
 });
