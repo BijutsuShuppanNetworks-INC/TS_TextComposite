@@ -7,8 +7,10 @@ canvasに文字合成をおこなうテスト
 - canvasにinputから取得した文字列を合成、画像として出力する
 - retinaで画像が引き延ばされてしまう対策
 - 縦書きの検証(プレビューエリアとcanvasの差をプレビュー側で調整)
-- 縦書きの検証(プレビューエリアとcanvasの差をcanvas側で調整)..いつかやりたい
 - スライダー・ボタンサイズ変更を追加したもの
+- iOS縦書きで絵文字がうまく表現できないのを修正
+- プレビューエリアをcanvasにする
+- 自由度の高い斜め書き
 
 ## 検証先URL
 http://bijutsushuppannetworks-inc.github.io/TS_TextComposite/
