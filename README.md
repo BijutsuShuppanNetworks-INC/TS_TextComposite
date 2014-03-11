@@ -21,6 +21,6 @@ http://bijutsushuppannetworks-inc.github.io/TS_TextComposite/
 ## 参考
 ### iOS絵文字対応
 iOSでの絵文字コード表  
-http://punchdrunker.github.io/iOSEmoji/table_html/index.html
+http://punchdrunker.github.io/iOSEmoji/table_html/index.html  
 JavaScript Stringでサロゲートペアを扱う  
 http://teppeis.hatenablog.com/entry/2014/01/surrogate-pair-in-javascript
