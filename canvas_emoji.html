@@ -225,7 +225,7 @@ $(function(){
                 min = 'D800',
                 max = 'DBFF';
             console.log(ch_l);
-            if (min.toString(16) <= ch_l || min.toString(16) >= ch_l){
+            if (min.toString(16) <= ch_l || max.toString(16) >= ch_l){
               ch = tl.substr(n, 2);
               n++;
               ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
