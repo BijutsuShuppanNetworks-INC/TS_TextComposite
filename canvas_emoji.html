@@ -211,7 +211,6 @@ $(function(){
           render_y  = preview_y *s*s,
           x,y;
 
-
       var _fillTextLine = function(ctx, text, x, y){
         var textList = text.split('\n');
         var lineHeight = ctx.measureText("あ").width;
@@ -221,10 +220,12 @@ $(function(){
           var tl = textList[i];
           var j = 0; // jは文字列の位置、nは文字列の順番
           for(var n = 0; n < tl.length; n++,j++){
-            var ch = tl.charAt(n);
-            var ch_l = ch.charCodeAt(0);
+            var ch  = tl.charAt(n),
+                ch_l = ch.charCodeAt(0).toString(16),
+                min = 'D800',
+                max = 'DBFF';
             console.log(ch_l);
-            if (55356 <= ch_l || 9832 === ch_l || 9851 === ch_l || 9742 === ch_l || 9723 === ch_l || 9724 === ch_l){
+            if (min.toString(16) <= ch_l || min.toString(16) >= ch_l){
               ch = tl.substr(n, 2);
               n++;
               ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
