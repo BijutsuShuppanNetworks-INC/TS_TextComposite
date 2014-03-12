@@ -222,10 +222,10 @@ $(function(){
           for(var n = 0; n < tl.length; n++,j++){
             var ch  = tl.charAt(n),
                 ch_l = ch.charCodeAt(0).toString(16),
-                min = 'D800',
-                max = 'DBFF';
+                min = '55296',
+                max = '56319';
             console.log(ch_l);
-            if (min.toString(16) <= ch_l || max.toString(16) >= ch_l){
+            if (parseInt(min , 16) <= ch_l && parseInt(max , 16) >= ch_l){
               ch = tl.substr(n, 2);
               n++;
               ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
