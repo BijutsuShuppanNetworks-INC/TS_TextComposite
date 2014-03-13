@@ -217,22 +217,48 @@ $(function(){
         var stx = canvas.width,
             sty = canvas.height;
         textList.forEach(function(elm, i) {
-          var tl = textList[i];
+          // 2ペア取得
+          var str1 = textList[i];
           var j = 0; // jは文字列の位置、nは文字列の順番
-          for(var n = 0; n < tl.length; n++,j++){
-            var ch  = tl.charAt(n),
-                ch_l = ch.charCodeAt(0).toString(16),
+          for(var n = 0; n < str1.length; n++,j++){
+            var ch          = str1.charAt(n),
+                ch_unicode  = ch.charCodeAt(0),
+                ch2         = str1.charAt(n+1),
+                ch2_unicode = ch2.charCodeAt(0);
                 min = '55296',
-                max = '56319';
-            console.log(ch_l);
-            if (parseInt(min , 16) <= ch_l && parseInt(max , 16) >= ch_l){
-              ch = tl.substr(n, 2);
-              n++;
-              ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
-              console.log('4bite ->' + ch + ' s->' + ch_l);
-              } else
+                max = '56319',
+                flag_min = '56806',
+                flag_max = '56831',
+                flag_fix = '55356';
+            var pearTxt_array = [8419,65039];
+            // console.log(ch_unicode);
+
+            if (min <= ch_unicode && max >= ch_unicode){
+              if( flag_fix == ch_unicode && flag_min <= ch2_unicode && flag_max >= ch2_unicode){
+                // 国旗絵文字(8bite文字)のサロゲート
+                ch = str1.substr(n, 4);
+                n = n+3;
+                ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+                console.log('国旗 ->' + ch + ' ch_unicode->' + ch_unicode +' ch2_unicode ->' +ch2_unicode);
+              } else{
+                // 通常のサロゲート(High Surrogatesが0xD800〜0xDBFF)
+                ch = str1.substr(n, 2);
+                n++;
+                ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+                console.log('4bite ->' + ch + ' ch_unicode->' + ch_unicode +' ch2_unicode ->' +ch2_unicode);
+              };
+
+            } else
+            if($.inArray(ch2_unicode, pearTxt_array)>= 0){
+              // 結合文字のサロゲートだった場合
+                ch = str1.substr(n, 2);
+                n++;
+                ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+                console.log('結合 ->' + ch + ' ch_unicode->' + ch_unicode +' ch2_unicode ->' +ch2_unicode);
+
+            } else
             if("{}()[]「」『』（）【】［］｛｝…─━ー=＝～^｜|".indexOf(ch) > -1 || ch.match(/[a-z]/i)){
-              // もし上記記号・アルファベットと一致したら右90°回転
+              // 上記記号・アルファベットと一致したら右90°回転
                 var ltr_render_x = -stx +render_y +lineHeight*j;//実際のy軸
                 var ltr_render_y = -render_y -lineHeight*s/2+lineHeight*i;//実際のx軸
                 ctx.save();
@@ -241,8 +267,9 @@ $(function(){
                   ctx.fillText(ch, ltr_render_x, ltr_render_y);
                 ctx.restore();
 
-              }else if("。、".indexOf(ch) > -1){
-              // もし上記と一致したら反転+左90°回転
+            }else
+            if("。、".indexOf(ch) > -1){
+              // 上記と一致したら反転+左90°回転
                 var r = lineHeight*i;
                 var ltr_render_x = -stx +render_y +lineHeight*j;
                 var ltr_render_y = -render_y +lineHeight*s/3 +lineHeight*i;
@@ -253,9 +280,10 @@ $(function(){
                   ctx.fillText(ch, ltr_render_x, -ltr_render_y);
                 ctx.restore();
 
-              }else{
-                ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
-              }
+            }else{
+              // 通常の縦書き
+              ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+            }
           };
         });
       };

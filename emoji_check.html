@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+  <title>サロゲートからの復元</title>
+  <style>
+    .note{
+      display: inline-block;
+      max-width: 100%;
+      padding: 1em 1.5em;
+      -webkit-border-radius: 5px;
+              border-radius: 5px;
+      -webkit-box-sizing: border-box;
+         -moz-box-sizing: border-box;
+              box-sizing: border-box;
+      background: #EAC900;
+    }
+
+    /* colors
+       ========================================================================== */
+    .blue{ color: #004A95;}
+    .gray{ color: #C0A500;}
+    .red{ color: #E82833;}
+  </style>
+</head>
+<body>
+  <h1>サロゲートのブラウザでの表示</h1>
+  <section id="unicode">
+    <h2>unicodeでの表記</h2>
+    <p class="note">
+      U+1F1E6のコードの場合、<br>
+      <span class="blue">&#x</span>　+ <span class="gray">U+</span><span class="red">1F604</span>(コードの赤字のところのみ)
+    </p>
+    <p>
+      出力結果：&#x1F604;
+    </p>
+  </section>
+
+  <section id="uft16">
+    <h2>UFT-16の場合</h2>
+
+    <div class="note">
+      文字コードからバイナリデータへの変換規則は下記１<br>
+      参考：<a href="http://codezine.jp/article/detail/1592">サロゲートペア入門</a><br>
+      <pre>
+        var x;
+        var s;
+        var a;  //上位サロゲート
+        var b;  //下位サロゲート
+        x = 0x20B9F;  //文字コードをセット
+        x -= 0x10000;
+        a = Math.floor(x / 0x400);
+        //Math.floor()で整数値に変換
+        a += 0xD800;
+        b = x % 0x400;
+        b += 0xDC00;
+        s = String.fromCharCode(a,b);
+        alert(s);
+      </pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>HTMLでサロゲート文字を取得したときの情報</h2>
+  </section>
+
+
+  <p>国旗絵文字の範囲検証</p>
+  <div id="stringArea">
+  </div>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+$(function(){
+  // var str_array[];
+  var min = parseInt(56806), //DDE6
+      max = parseInt(56831), //DDFF
+      fix = parseInt(55356);
+  var strings = [];
+  for(i = min; i <= max; i++){
+    var a = fix.toString(16),
+        b = i.toString(16);
+    console.log('0x'+a);
+    strings.push(String.fromCharCode('0x'+a,'0x'+b)+'<br>');
+  }
+  $('#stringArea').html(strings);
+});
+</script>
+</body>
+</html>
