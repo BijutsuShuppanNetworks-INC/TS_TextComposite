@@ -17,6 +17,11 @@
       background: #EAC900;
     }
 
+    .emoji{
+      display: inline-block;
+      margin-left: 5px;
+    }
+
     /* colors
        ========================================================================== */
     .blue{ color: #004A95;}
@@ -41,7 +46,7 @@
     <h2>UFT-16の場合</h2>
 
     <div class="note">
-      文字コードからバイナリデータへの変換規則は下記１<br>
+      文字コードからバイナリデータへの変換規則は下記<br>
       参考：<a href="http://codezine.jp/article/detail/1592">サロゲートペア入門</a><br>
       <pre>
         var x;
@@ -62,13 +67,26 @@
   </section>
 
   <section>
-    <h2>HTMLでサロゲート文字を取得したときの情報</h2>
+    <h2>javascriptでサロゲート文字を取得したときの情報</h2>
+    <div class="note">
+      &#x1F604;を文字列で取得し(javascript上、2文字になる)、それぞれを.charCodeAtで取得した場合
+      <h3 style="margin-bottom:0;">high surrogate</h3>
+      <p style="margin:0;">str.charCodeAt(0);</p>
+      <span class="red">55357</span><br>
+
+      <h3 style="margin-bottom:0;">low surrogate</h3>
+      <p style="margin:0;">str.charCodeAt(1);</p>
+      <span class="red">56836</span><br>
+
+      <p>
+        unicodeの0x以下5文字を10進法にしたもので表示される。<br>
+      </p>
+    </div>
   </section>
 
 
-  <p>国旗絵文字の範囲検証</p>
-  <div id="stringArea">
-  </div>
+  <p>おまけ：国旗絵文字の範囲検証</p>
+  <div id="stringArea"></div>
 
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -83,7 +101,7 @@ $(function(){
     var a = fix.toString(16),
         b = i.toString(16);
     console.log('0x'+a);
-    strings.push(String.fromCharCode('0x'+a,'0x'+b)+'<br>');
+    strings.push('<span class="emoji">'+ String.fromCharCode('0x'+a,'0x'+b) +'</span>');
   }
   $('#stringArea').html(strings);
 });
