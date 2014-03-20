@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1,minimal-ui">
+  <title>絵文字の検証bokutachi.otf</title>
+  <link rel="stylesheet" href="webfont.css">
+  <style>
+    @font-face {
+      font-family: bokutachi;
+      src: url(http://sys.bnw-dev.info/ohnami/font/boku/bokutachi.otf) format('opentype');
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrapper">
+  <h1>webフォント検証(bokutachi.otf 1.9MB)</h1>
+
+  <div class="canvasArea">
+    <canvas id="c"></canvas>
+    <div class="loading" id="loading"></div>
+  </div>
+
+  <div class="input">
+    <textarea name="inputArea1" placeholder="テキストを入力してください" rows="3" class="input__area" id="inputArea1" data-txtLeft="160" data-txtTop="30" data-txtAlign="center" data-txtBaseline="middle" data-font="bokutachi"></textarea>
+  </div>
+
+  <ul class="linkkist">
+    <li><a href="webfont1.html">bokutachi.otf 1.9MB</a></li>
+    <li><a href="webfont2.html">bokutachi.woff 1.5MB</a></li>
+    <li><a href="webfont3.html">uzura.ttf 9.2MB</a></li>
+    <li><a href="webfont4.html">uzura.woff 5MB</a></li>
+  </ul>
+
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="webfont.js"></script>
+
+</body>
+</html>
+

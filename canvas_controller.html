@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+  <title>文字合成Canvas画像 + 画像のみ表示のリンク</title>
+  <style type="text/css">
+  body,div{
+    margin: 0;
+    padding: 0;
+  }
+  .wrapper{
+    position: relative;
+    width: 320px;
+    height: 480px;
+    overflow: hidden;
+  }
+
+   @font-face {
+    font-family: 'Stint_Ultra';
+    src: url(http://themes.googleusercontent.com/static/fonts/stintultraexpanded/v2/FeigX-wDDgHMCKuhekhedTcHt7R-NPdhrDLjTJhdxn0.woff) format('woff');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+
+
+  /* プレビューエリア
+     ========================================================================== */
+  .preview{
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 10px auto;
+    background: url(screen.png);
+    -webkit-background-size: 180px;
+    background-size: 180px;
+    overflow: hidden;
+  }
+
+
+
+  /* 文字出力領域
+     ========================================================================== */
+  .preview__text_area{
+    position: absolute;
+    margin: 0;
+    font-family: "ヒラギノ角ゴ Pro W3, Hiragino Kaku Gothic Pro, Arial  , Meiryo";
+    -webkit-writing-mode:vertical-rl;
+    direction:ltr;
+    -webkit-user-select:none;
+  }
+
+
+
+  /* 文字入力領域
+     ========================================================================== */
+  .input{
+    width: 300px;
+    height: 70px;
+    border: 2px solid #fff;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #A2C5D9;
+  }
+
+  .input__area{
+    width: 290px;
+    height: 60px;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    -webkit-appearance: none;
+    font-family: 'Stint_Ultra';
+    overflow: hidden;
+    white-space:pre;
+  }
+
+
+
+  /* canvas合成後
+     ========================================================================== */
+  .canvas--input-area__hide:focus{
+    border: none;
+  }
+
+  .grayLayor{
+    /*display: none;*/
+    position: absolute;
+    top: 480px;
+    left: 0;
+    width: 100%;
+    height: 480px;
+    background: rgba(0,0,0,0.3);
+    text-align: center;
+    -webkit-transition: all .5s ease-in;
+    transition: all .5s ease-in;
+  }
+
+  #c{
+    display: none;
+    font-size: 18px;
+  }
+
+  #add{
+    height: auto;
+    margin: 10px auto;
+  }
+
+  .comment{
+    display: inline-block;
+    margin: 10px auto;
+    padding: 10px;
+    background: #FFF;
+    -webkit-border-radius: 5px;
+            border-radius: 5px;
+  }
+  .close{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #fff;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #ECC0C1;
+    font-size: 20px;
+    text-align: center;
+    line-height: 20px;
+  }
+
+  </style>
+</head>
+
+<body>
+<div class="wrapper">
+  <div class="preview">
+    <pre class="preview__text_area" id="js_preview"></pre>
+  </div>
+
+  <div class="input">
+    <textarea name="inputArea1" placeholder="sample" rows="3" class="input__area" id="inputArea1" data-inputAreaLeft="150" data-inputAreaTop="25" data-inputAreaWidth="100" data-inputAreaHeight="130"></textarea>
+  </div>
+
+  <button id="btn">入力終了</button>
+
+  <canvas id="c"></canvas>
+
+  <div class="grayLayor">
+    <div class="grayLayor--relust">
+      <img src="" id="add" width="180">
+      <span class="comment">
+        画像を長押しして保存しよう！
+      </span>
+    </div>
+    <div class="close">×</div>
+  </div>
+
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+$(function(){
+  var $preview = $('#js_preview'),
+      $textArea = $('#inputArea1');
+  var s = 1.388;
+  var preview_w = $textArea.attr('data-inputAreaWidth'),
+      preview_h = $textArea.attr('data-inputAreaHeight');
+  var preview_x = parseInt($textArea.attr('data-inputAreaLeft'));
+      preview_y = parseInt($textArea.attr('data-inputAreaTop'));
+  $preview.css({
+    'top'   : preview_y,
+    'left'  : (preview_x - preview_w ) *s,
+    'width' : preview_w,
+    'height': preview_h
+  })
+
+　 // canvasから画像合成
+  // ==========================================================================
+  $('#btn').click(function(){
+    // grayLayor出現
+    $('.grayLayor').css({
+        "display": "block",
+        "-webkit-transform": "translate3d(0, -480px, 0)",
+        "transform": "translate3d(0, -480px, 0)"
+    });
+
+    // 画像作成
+    var img = document.createElement("img");
+    img.onload = function(){
+      var canvas = document.getElementById("c");
+      canvas.width = 250;
+      canvas.height = 250;
+      var ctx = canvas.getContext("2d");
+
+      // ベースとなる領域
+      ctx.beginPath()
+      var canvasPattern = ctx.createPattern(img, 'repeat');
+      ctx.fillStyle = canvasPattern;
+      ctx.rect(0, 0, 250, 250);
+      ctx.fill();
+      ctx.scale(0.72,0.72); // retina対応用
+
+      // テキスト
+      ctx.fillStyle = "#000";
+      ctx.font = "31px normal 'ヒラギノ角ゴ Pro W3, Hiragino Kaku Gothic Pro, Arial  , Meiryo'";
+      ctx.textBaseline = "top";
+
+      var text      = $textArea.val(),
+          render_x  = preview_x *s*s,
+          render_y  = preview_y *s*s,
+          x,y;
+
+
+      var _fillTextLine = function(ctx, text, x, y){
+        var textList = text.split('\n');
+        var lineHeight = ctx.measureText("あ").width;
+        var stx = canvas.width,
+            sty = canvas.height;
+        textList.forEach(function(elm, i) {
+            Array.prototype.forEach.call(elm, function(ch, j) {
+              if("{}()[]「」『』（）【】［］｛｝…─━ー=＝～^｜|".indexOf(ch) > -1 || ch.match(/[a-z]/i)){
+              // もし上記記号・アルファベットと一致したら右90°回転
+                var ltr_render_x = -stx +render_y +lineHeight*j;//201
+                var ltr_render_y = -render_y -lineHeight*s/2+lineHeight*i;//68
+                ctx.save();
+                  ctx.rotate(90* Math.PI / 180);
+                  ctx.translate(stx, -stx);
+                  ctx.fillText(ch, ltr_render_x, ltr_render_y);
+                ctx.restore();
+
+              }else if("。、".indexOf(ch) > -1){
+              // もし上記と一致したら反転+左90°回転
+                var r = lineHeight*i;
+                var ltr_render_x = -stx +render_y +lineHeight*j;
+                var ltr_render_y = -render_y +lineHeight*s/3 +lineHeight*i;
+                ctx.save();
+                  ctx.scale(-1,1);
+                  ctx.rotate(90* Math.PI / 180);
+                  ctx.translate(stx, stx);
+                  ctx.fillText(ch, ltr_render_x, -ltr_render_y);
+                ctx.restore();
+
+              }else{
+                ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+              }
+            });
+          });
+      };
+
+      _fillTextLine(ctx, text, render_x, render_y);
+
+      var img_png_src = canvas.toDataURL();
+      $('#add').attr('src', img_png_src);
+    };
+
+    img.src = "./screen.png";
+
+
+    $('.close').click(function(){
+      $('.grayLayor').css('display','none');
+    });
+
+  });
+
+
+  // inputの内容をpreviewに反映
+  // ==========================================================================
+    $textArea.change(function(){
+      $('#js_preview').css('display','none');
+      var val = $(this).val();
+      var textList = val.replace(/ /g,'    ').replace(/　/g,'     ').replace(/([a-z])/gi,'$1  ');
+
+      setTimeout(function(){
+        $('#js_preview').html(textList).css('display','block');
+      }, 100)
+
+    });
+
+});
+
+
+</script>
+
+</body>
+</html>
+
