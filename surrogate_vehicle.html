@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+  <title>vehicle</title>
+  <link rel="stylesheet" href="surrogate.css">
+</head>
+
+<body style="">
+<div class="wrapper">
+  <nav class="navigation">
+    <ul>
+      <li class="navigation__item"><a href="surrogate_smile.html">smile</a></li>
+      <li class="navigation__item"><a href="surrogate_flower.html">flower</a></li>
+      <li class="navigation__item"><a href="surrogate_bell.html">bell</a></li>
+      <li class="navigation__item navigation--is-here"><a href="surrogate_vehicle.html">vehicle</a></li>
+      <li class="navigation__item"><a href="surrogate_number.html">number</a></li>
+    </ul>
+  </nav>
+
+  <div class="result">
+    <ul id="resultUl" class="resultUl"></ul>
+  </div>
+
+  <div class="btn" id="gotoTop"></div>
+
+  <footer>
+    <p>
+      2014/03/14<br>
+      iOS7.1で使える絵文字一覧
+    </p>
+  </footer>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+$(function(){
+  var targetURL = "http://sys.bnw-dev.info/ohnami/emoji/file/20140314132816-Vehicle.csv";
+  var emojis = [];
+
+  console.log('url : ' + targetURL);
+
+  $.ajax({
+    type : 'GET',
+    url : targetURL,
+    success : function(data){
+      tmpEmoji = data.split("\n");
+      // console.log(tmpEmoji);
+
+      tmpEmoji.forEach(function(emoji, i) {
+        var surrogate = emoji.split(" ");
+        var s1 = surrogate[0],
+            s2 = surrogate[1],
+            s3 = surrogate[2],
+            s4 = surrogate[3];
+        // emojis.push(emoji.split(" "));
+        if( typeof s2 === "undefined"){
+          // 2bite
+          emojis.push('<li class="emoji"><span class="emoji__no">'+ (i+1) +'</span>' + String.fromCharCode(s1) + '<span class="emoji__str">' +s1+ '</span></li>')
+        } else
+
+        if( typeof s3 === "undefined"){
+          // 4bite
+          emojis.push('<li class="emoji"><span class="emoji__no">'+ (i+1) +'</span>' + String.fromCharCode(s1,s2) + '<span class="emoji__str">' +s1+ ' ' +s2+ '</span></li>')
+        } else
+
+        if( typeof s4 === "undefined" || s4 === '0xNaN'){
+          // 6bite
+          emojis.push('<li class="emoji"><span class="emoji__no">'+ (i+1) +'</span>' + String.fromCharCode(s1,s2,s3) + '<span class="emoji__str">' +s1+ ' ' +s2+ ' ' +s3+ '</span></li>')
+        } else
+
+        {
+          // 8bite
+          emojis.push('<li class="emoji"><span class="emoji__no">'+ (i+1) +'</span>' + String.fromCharCode(s1,s2,s3,s4) + '<span class="emoji__str">' +s1+ ' ' +s2+ ' ' +s3+ ' ' +s4+ '</span></li>')
+        };
+      });
+      $('#resultUl').append(emojis);
+
+    },
+    error : function(e){
+      console.log(e);
+    }
+  });
+
+  // go to TOP
+  $('#gotoTop').on('touchstart click', function(){
+    $('body,html').animate({scrollTop : 0}, 600);
+  });
+});
+
+
+</script>
+
+
+
+
+</body></html>
