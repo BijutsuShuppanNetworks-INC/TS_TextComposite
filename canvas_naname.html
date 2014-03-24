@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1,minimal-ui">
+  <title>ななめ書き検証</title>
+  <link rel="stylesheet" href="webfont.css">
+  <style>
+//    @font-face {
+//      font-family: bokutachi;
+//      src: url(http://sys.bnw-dev.info/ohnami/font/boku/bokutachi.otf) format('opentype');
+//    }
+  </style>
+</head>
+
+<body>
+<div class="wrapper">
+  <h1>ななめ書き検証</h1>
+
+  <div class="canvasArea">
+    <canvas id="c"></canvas>
+    <div class="loading" id="loading"></div>
+  </div>
+
+  <div class="input">
+    <textarea name="inputArea1" placeholder="テキストを入力してください" rows="3" class="input__area" id="inputArea1" data-txtLeft="160" data-txtTop="30" data-txtAlign="center" data-txtBaseline="middle" data-font="bokutachi"></textarea>
+  </div>
+
+x:
+<select name="x">
+	<option value="100">100</option>
+	<option value="160" selected>160</option>
+	<option value="200">200</option>
+	<option value="250">250</option>
+</select>
+
+y:
+<select name="y">
+	<option value="15">15</option>
+	<option value="30" selected>30</option>
+	<option value="60">60</option>
+	<option value="120">120</option>
+</select>
+
+角度:
+<select name="angle">
+	<option value="-15">-15</option>
+	<option value="0" selected>0</option>
+	<option value="42">42</option>
+	<option value="90">90</option>
+	<option value="180">180</option>
+</select>
+
+寄せ:
+<select name="align">
+	<option value="left">左</option>
+	<option value="center" selected>中央</option>
+</select>
+
+
+
+
+
+
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="canvas_naname.js"></script>
+
+</body>
+</html>
+
