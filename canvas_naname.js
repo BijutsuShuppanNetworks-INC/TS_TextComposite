@@ -11,10 +11,10 @@ $(function(){
   $loading.css('display', 'block');
 
 
+  //画像を読み込ませる為の時間
   $(function(){
-      setTimeout(drewImage, 100);
+      setTimeout(drewImage, 200);
   });
-
 
   // canvasから画像合成
   // ==========================================================================
@@ -26,6 +26,7 @@ $(function(){
     drewImage();
   });
 
+  //座標、角度、寄せ変更時も画像合成
   $('[name=x], [name=y], [name=angle], [name=align]').change(function(){
     $loading.css('display', 'block');
     drewImage();
@@ -35,12 +36,11 @@ $(function(){
 
   var drewImage = function(){
 
+	//選択値を取得
     var txtArea_x = parseInt($('[name=x]').val()); // テキスト入力位置(x軸)
         txtArea_y = parseInt($('[name=y]').val()); // テキスト入力位置(y軸)
-
-    var angle = parseInt($('[name=angle]').val()); 
-
-    var align = $('[name=align]').val(); 
+    var select_angle = parseInt($('[name=angle]').val()); //角度
+    var select_align = $('[name=align]').val(); //寄せ
 
     // 画像作成
     var canvas = document.getElementById("c");
@@ -60,9 +60,8 @@ $(function(){
     ctx.fillStyle = "#000";
     ctx.font = "31px normal '" + txt_font +"'";
 //    ctx.textAlign = txt_align;
-    ctx.textAlign = align;
+    ctx.textAlign = select_align;
     ctx.textBaseline = txt_baseline;
-
 
 
     var text      = $textArea.val(),
@@ -77,13 +76,19 @@ $(function(){
 
 //          ctx.fillText(text, x, y + lineHeight * i);
 
-
+    	//保存
 		ctx.save();
+
+		  //原点をテキスト挿入位置に変更
           ctx.translate(x, y);
-//          ctx.rotate(30 * Math.PI / 180);
-          ctx.rotate(angle * Math.PI / 180);
-//          ctx.fillText(text, 0, 0 + lineHeight * i, 100);
+
+          //回転
+          ctx.rotate(select_angle * Math.PI / 180);
+
+          //テキスト挿入
           ctx.fillText(text, 0, 0 + lineHeight * i);
+
+        //保存状態に戻す
 		ctx.restore();
 
       });
