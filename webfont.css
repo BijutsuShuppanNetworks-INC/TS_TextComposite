@@ -47,25 +47,26 @@
 
   /* canvas
      ========================================================================== */
+  #edit{ display: none;}
+
   .canvasArea{
     position: relative;
     margin-top: 10px;
-    height: 240px;
+    text-align: center;
   }
 
-  #c{
+  #c,
+  .resuleImg{
     display: block;
     width: 240px;
+    height: 240px;
     margin: auto;
     font-size: 18px;
   }
 
   .loading{
-    display: none;
-    position: absolute;
-    top: 0;
     width: 100%;
-    height: 100%;
+    height: 100px;
     background: rgba(255, 255, 255, .7);
   }
 
@@ -73,14 +74,14 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 30px;
-    height: 30px;
-    margin: -15px auto auto -15px;
+    width: 24px;
+    height: 24px;
+    margin: -12px auto auto -12px;
     background-color: rgba(0,0,0,0);
-    border: 3px solid rgba(0,0,0,0.2);
+    border: 3px solid rgba(0,0,0,.12);
     border-top: 3px solid rgba(0,0,0,0);
     border-left: 3px solid rgba(0,0,0,0);
-    border-radius: 30px;
+    border-radius: 24px;
     box-shadow: 0 0 10px #ccc;
     opacity: .9;
     -moz-animation: spin .6s infinite linear;
@@ -98,8 +99,18 @@
     100% { -webkit-transform: rotate(360deg);}
   }
   @keyframes spin {
-    0% { -webkit-transform: rotate(0deg);}
-    100% { -webkit-transform: rotate(360deg);}
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+  }
+
+  .btn{
+    margin: 20px 10px;
+    border: 1px solid #000;
+    -webkit-border-radius: 10px;
+            border-radius: 10px;
+    line-height: 45px;
+    text-align: center;
+    cursor: pointer;
   }
 
 

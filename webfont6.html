@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+  <title>絵文字の検証ニューロダンB</title>
+  <link rel="stylesheet" href="webfont.css">
+  <style>
+    body{　font-family: "F+UD-ニューロダン B";}
+    canvas{
+      font-family: "nick";
+    }
+
+
+  </style>
+  <script type="text/javascript" src="http://webfont.fontplus.jp/accessor/script/fontplus.js?Ib6niqQ~h0k%3D&aa=1" charset="utf-8"></script>
+</head>
+
+<body>
+<div class="wrapper">
+  <h1>webフォント検証(モトヤステンシルアポロ4)</h1>
+
+  <!-- #save -->
+  <div id="save">
+    <div class="canvasArea">
+      <img src="disney_img_03_320.gif" alt="" class="resuleImg" id="resultImg">
+      <p>画像長押しで保存</p>
+    </div>
+  </div>
+  <!-- //#save -->
+
+  <!-- #edit -->
+  <div id="edit">
+    <div class="canvasArea">
+      <canvas id="c"></canvas>
+      <div class="loading" id="loading"></div>
+    </div>
+    <div class="input">
+      <textarea name="inputArea1" placeholder="テキストを入力してください" rows="3" class="input__area" id="inputArea1" data-txtLeft="160" data-txtTop="30" data-txtAlign="center" data-txtBaseline="middle" data-font="uzura"></textarea>
+    </div>
+    <div class="btn" id="button">作成する</div>
+  </div>
+
+  <ul class="linkkist">
+    <li><a href="webfont5.html">モトヤstアポロ(文字制限あり)</a></li>
+    <li><a href="webfont6.html">F+UD-ニューロダン B(文字制限なし)</a></li>
+    <li><a href="webfont.html">一覧</a></li>
+  </ul>
+
+</div>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+$(function(){
+  var loadname;
+  var $textArea = $('#inputArea1'),
+      $loading = $('#loading');
+  var s = 1; //倍率
+  var txtArea_x = parseInt($textArea.attr('data-txtLeft')), // テキスト入力位置(x軸)
+      txtArea_y = parseInt($textArea.attr('data-txtTop')); // テキスト入力位置(y軸)
+  var txt_align = $textArea.attr('data-txtAlign'), // 横方向のテキスト描画
+      txt_baseline = $textArea.attr('data-txtBaseline'); // 横方向のテキスト描画
+
+  $loading.css('display', 'block');
+
+  drewImage();
+
+
+
+  // canvasから画像合成
+  // ==========================================================================
+
+  function drewImage(){
+    var canvas = document.getElementById("c");
+    var txt_font  = 'nick'; // フォント
+    canvas.width = 320;
+    canvas.height = 320;
+    var ctx = canvas.getContext("2d");
+    var img = new Image();
+    img.src = './disney_img_03_320.gif';
+    img.onload = function(){
+
+      // ベースとなる領域
+      ctx.beginPath();
+      var canvasPattern = ctx.createPattern(img, '');
+      ctx.fillStyle = canvasPattern;
+      ctx.rect(0, 0, 320, 320);
+      ctx.fill();
+
+      ctx.scale(s,s); // retina対応用
+
+      // テキスト
+      ctx.fillStyle = "#000";
+      ctx.font = "31px normal '" + txt_font +"'";
+      ctx.textAlign = txt_align;
+      ctx.textBaseline = txt_baseline;
+
+      var text      = $textArea.val(),
+          render_x  = txtArea_x *s,
+          render_y  = txtArea_y *s;
+
+      var _fillTextLine = function(ctx, text, x, y){
+        var textList = text.split('\n');
+        var lineHeight = ctx.measureText("あ").width;
+        textList.forEach(function(text, i){
+          ctx.fillText(text, x, y + lineHeight * i);
+        });
+      };
+
+
+      console.log(text);
+      _fillTextLine(ctx, text, render_x, render_y);
+      $loading.css('display', 'none');
+
+      var img_png_src = canvas.toDataURL();
+      $('#resultImg').attr('src', img_png_src);
+    };
+
+  }
+
+
+  /* changeで再描画
+     ========================================================================== */
+  $textArea.change(function(){
+    var text = $textArea.val();
+    console.log(text);
+    FONTPLUS.load(
+      [{'fontname':"F+UD-ニューロダン B", 'nickname':'nick', 'text':text}],
+      drewImage
+    );
+
+  });
+
+
+
+    /* history
+       ========================================================================== */
+    history.replaceState('edit'); //初期のstateをセット
+
+  // tabのクリック
+  // ==========================================================================
+  $('#button').on('click',function() {
+    openSave();
+    history.pushState('save', null,'#save');
+  });
+
+  /* 履歴操作
+     ========================================================================== */
+  $(window).on('popstate', function(e){
+    var state = e.originalEvent.state;
+    console.log(state);
+    if(state === 'save'){
+      openSave();
+    } else {
+      openEdit();
+    }
+  });
+
+  var $edit = $('#edit'),
+      $save = $('#save');
+  function openEdit(){
+    $edit.css('display', 'block');
+    $save.css('display', 'none');
+  }
+  function openSave(){
+    $edit.css('display', 'none');
+    $save.css('display', 'block');
+  }
+
+});
+</script>
+
+</body>
+</html>
+

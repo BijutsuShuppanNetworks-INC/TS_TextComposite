@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+  <title>surrogate</title>
+  <style type="text/css">
+  body,div{
+    margin: 0;
+    padding: 0;
+  }
+  .wrapper{
+    position: relative;
+    width: 320px;
+    overflow: hidden;
+  }
+
+  .wrapper:after {
+    content: "";
+    clear: both;
+    display: block;
+  }
+
+  .flame__left{
+    float: left;
+    width: 50%;
+  }
+
+  .flame__right{
+    float: right;
+    width: 50%;
+  }
+
+  .input__area{
+    display: block;
+    width: 60px;
+    height: 4000px;
+    margin: 10px 0 10px 10px;
+  }
+
+  #form{
+    padding: 10px;
+  }
+
+  #submit{
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+            border-radius: 3px;
+  }
+  </style>
+</head>
+
+<body style="">
+<div class="wrapper">
+
+  <div class="flame__left">
+    <div class="input">
+      <textarea name="inputArea1" placeholder="絵文字" rows="3" class="input__area" id="inputArea1"></textarea>
+    </div>
+  </div>
+
+  <div class="flame__right">
+    <form action="http://sys.bnw-dev.info/ohnami/emoji/receive.php" method="POST" id="form">
+      <label for="name">ファイル名</label>
+      <input type="text" name="name"><br>
+      <div id="submit">送信</div>
+    </form>
+  </div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+$(function(){
+  var $inputArea1 = $('#inputArea1'),
+      $form       = $('#form');
+
+  // 入力
+  // ==========================================================================
+  var obj = {};
+  function _tap(){
+    obj.y = document.documentElement.scrollTop || document.body.scrollTop;
+    setTimeout(function() {
+      obj.y2 = document.documentElement.scrollTop || document.body.scrollTop;
+    }, 200);
+  }
+  $inputArea1.on('touchstart', function() {
+    _tap();
+    setTimeout(function() {
+      if ((obj.y == obj.y2) ){
+        var s = $inputArea1.val();
+        $inputArea1.val(s+'\n');
+      }
+    }, 150);
+  });
+
+
+  // 出力
+  // ==========================================================================
+  $('#submit').click(function() {
+    var input = [];
+    var textList = $inputArea1.val().split('\n');
+    textList.forEach(function(elm, i) {
+      var str1 = textList[i];
+
+      var ch_unicode  = str1.charCodeAt(0),
+          ch2_unicode = str1.charCodeAt(1),
+          ch3_unicode = str1.charCodeAt(2),
+          ch4_unicode = str1.charCodeAt(3);
+      console.log( str1 + ' 1->' + ch_unicode +' 2 ->' +ch2_unicode + ' 3->' + ch3_unicode +' 4 ->' +ch4_unicode);
+
+      if(ch4_unicode > 0){
+        // 8bite
+        input.push('<input type="hidden" name="emoji[]" value="0x'+ch_unicode.toString(16)+' 0x'+ch2_unicode.toString(16)+' 0x'+ch3_unicode.toString(16)+' 0x'+ch4_unicode.toString(16)+'">');
+
+      } else if(ch3_unicode > 0){
+        // 6bite
+        input.push('<input type="hidden" name="emoji[]" value="0x'+ch_unicode.toString(16)+' 0x'+ch2_unicode.toString(16)+' 0x'+ch3_unicode.toString(16)+'">');
+
+      } else if(ch2_unicode > 0){
+        // 4bite
+        input.push('<input type="hidden" name="emoji[]" value="0x'+ch_unicode.toString(16)+' 0x'+ch2_unicode.toString(16)+'">');
+
+      } else {
+        // 1.2bite
+        input.push('<input type="hidden" name="emoji[]" value="0x'+ch_unicode.toString(16)+'">');
+      }
+    });
+
+    $form.append(input).submit();
+  });
+
+});
+
+
+</script>
+
+
+
+
+</body></html>
